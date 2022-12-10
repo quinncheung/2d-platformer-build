@@ -4,6 +4,7 @@ cls
 [string]$unityEditor = "C:\Program Files\Unity\Hub\Editor\2020.3.42f1\Editor\Unity.exe"
 
 [string]$projectFolder = "$PSScriptRoot\2d-platformer"
+[string]$unityLogFile = "$projectFolder\Editor.log"
 [string]$buildConsoleLog = "$PSScriptRoot\buildConsole.log"
 
 
@@ -37,6 +38,15 @@ try
 
   $process = start-process git -ArgumentList "clone -q $sourceRepo $projectFolder" -PassThru -Wait -WindowStyle Hidden
   VerifyProcessExitCode "Git clone" $process.ExitCode
+
+  # Build it
+  [string]$buildArgs = "-batchmode -logFile `"$unityLogFile`" -buildTarget Android -projectPath `"$projectFolder`" -quit"
+
+  LogMessage("Starting Unity build. Please stand by.")
+
+  $process = start-process $unityEditor -ArgumentList $buildArgs -PassThru -Wait
+  VerifyProcessExitCode "Unity editor build " $process.ExitCode
+
 }
 catch
 {
