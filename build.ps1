@@ -30,6 +30,9 @@ function VerifyProcessExitCode($action, $exitCode)
 
 try
 {  
+  # Remove old artifacts and log files
+  Remove-Item -Path $PSScriptRoot\*.zip, $PSScriptRoot\*.log -ErrorAction SilentlyContinue
+
   # Remove existing repo folder if it exists
   if(Test-Path $projectFolder -PathType Container)
   {
@@ -43,6 +46,7 @@ try
   $process = start-process git -ArgumentList "clone -q $sourceRepo $projectFolder" -PassThru -Wait -WindowStyle Hidden
   VerifyProcessExitCode "Git clone" $process.ExitCode
 
+
   # Build it
   [string]$buildArgs = "-batchmode -logFile `"$unityLogFile`" -buildTarget Android -projectPath `"$projectFolder`" -quit"
 
@@ -51,14 +55,30 @@ try
   $process = start-process $unityEditor -ArgumentList $buildArgs -PassThru -Wait
   VerifyProcessExitCode "Unity editor build " $process.ExitCode
 
+  
   # Show the Unity log output on stdout for the user
   if(Test-Path $unityLogFile -PathType Leaf)
   {
     Get-Content $unityLogFile
   }
 
+  # Zip artifacts. This will fail if any of the specified files/folders were not created.
+  $currentDate = Get-Date -format "dd-MMM-yyyy-HH-mm"
+  Compress-Archive -Path $buildConsoleLog, $unityLogFile, "$projectFolder\Logs\*" -DestinationPath "BuildLogs-$currentDate.zip" -Force
+  LogMessage("Created artifact BuildLogs")
+
+  $compressInfo = @{
+    Path = "$projectFolder\Assets", "$projectFolder\Library", "$projectFolder\Packages", "$projectFolder\ProjectSettings"
+    DestinationPath = "com.unity.template.2d-5.0.2.zip"
+  }
+
+  Compress-Archive @compressInfo -Force
+  LogMessage("Created artifact $($compressInfo['DestinationPath'])")
+
 }
 catch
 {
+  LogMessage("******* AN ERROR OCURRED ******************")
   LogMessage("ERROR: $_ " + $Error[0].ScriptStackTrace)
 }
+
