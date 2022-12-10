@@ -22,6 +22,10 @@ function VerifyProcessExitCode($action, $exitCode)
   { 
     throw "$action failed. The process has exited with code $($exitCode)"
   }
+  else
+  {
+    LogMessage("$action completed without error.")
+  }
 }
 
 try
@@ -46,6 +50,12 @@ try
 
   $process = start-process $unityEditor -ArgumentList $buildArgs -PassThru -Wait
   VerifyProcessExitCode "Unity editor build " $process.ExitCode
+
+  # Show the Unity log output on stdout for the user
+  if(Test-Path $unityLogFile -PathType Leaf)
+  {
+    Get-Content $unityLogFile
+  }
 
 }
 catch
