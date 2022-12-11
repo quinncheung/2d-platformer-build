@@ -61,10 +61,10 @@ try
   # Build it
   [string]$buildArgs = "-batchmode -logFile `"$unityLogFile`" -buildTarget Android -projectPath `"$projectFolder`" -quit"
 
-  LogMessage("Starting Unity build.")
+  LogMessage("Starting Unity build. Build logfile: $unityLogFile")
 
   $process = start-process $unityEditor -ArgumentList $buildArgs -PassThru -Wait
-  VerifyProcessExitCode "Unity editor build " $process.ExitCode
+  VerifyProcessExitCode "Unity build " $process.ExitCode
 
 
   # Show the Unity log output on stdout for the user
@@ -112,6 +112,7 @@ try
   write-host "  Login with username: $username, password: $pwd"
   write-host "  Then navigate to Artifactory->Artifacts->unity-2D-platformer"
   write-host "***************************************************************"  
+  write-host
 
 }
 catch
