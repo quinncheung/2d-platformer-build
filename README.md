@@ -11,12 +11,12 @@ Prerequisites:
 - Unity Editor version 2020.3.42f1 installed in "C:\Program Files\Unity\Hub\Editor\2020.3.42f1\Editor\Unity.exe"
 
 How To Run :
-- From a Windows command prompt
+- Windows command prompt
      - Open a command prompt as an Administrator
      - Change directory to the repository root folder
      - type "powershell -file build.ps1"
      
-- From a Powershell command prompt
+- Powershell command prompt
      - Open a Powershell window as an Administrator
      - Change directory to the repository root folder
      - type "./build.ps1"
