@@ -68,10 +68,10 @@ try
 
 
   # Show the Unity log output on stdout for the user
-  if(Test-Path $unityLogFile -PathType Leaf)
-  {
-    Get-Content $unityLogFile
-  }
+  #if(Test-Path $unityLogFile -PathType Leaf)
+  #{
+  #  Get-Content $unityLogFile
+  #}
 
   # Zip artifacts. This will fail if any of the specified files/folders were not created.
   Compress-Archive -Path $buildConsoleLog, $unityLogFile, "$projectFolder\Logs\*" -DestinationPath "$artifactsFolder\BuildLogs.zip" -Force
@@ -92,7 +92,7 @@ try
   $env:CI = "true"
 
   $currentDate = Get-Date -format "dd-MMM-yyyy-HH-mm"
-  $repoPath = "unity-2D-platformer/test/$currentDate/"
+  $repoPath = "unity-2D-platformer/$currentDate/"
   $username = "unityUser"
   $pwd = "Today123!"
   $args = "rt u --user $username --password $pwd --url `"https://quinncheung.jfrog.io/artifactory`" *.zip $repoPath"
@@ -106,9 +106,10 @@ try
   write-host
   write-host "***************************************************************"
   write-host "  BUILD SUCCESSFUL. View the build artifacts at "
+  write-host
   write-host "    https://quinncheung.jfrog.io/ui/login/"
   write-host
-  write-host "  Login with username: $username and password: $pwd"
+  write-host "  Login with username: $username, password: $pwd"
   write-host "  Then navigate to Artifactory->Artifacts->unity-2D-platformer"
   write-host "***************************************************************"  
 
